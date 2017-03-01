@@ -99,7 +99,6 @@ function
     : FUNC identifier '(' parameter_list ')' statement { 
         $$ = (node_t *) malloc ( sizeof(node_t) );
 		node_init($$, FUNCTION , 0, 3, $2, $4, $6);
-		//node_print($$,0); 
 		}
 	;
 

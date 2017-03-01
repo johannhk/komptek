@@ -1,8 +1,15 @@
-#include "../include/vslc.h"
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <assert.h>
+#include "vslc.h"
+#define SINGLE_CHILD(child) ((child)->type==GLOBAL || (child)->type==STATEMENT || \
+                (child)->type==PRINT_ITEM || (child)->type==PARAMETER_LIST || (child)->type==ARGUMENT_LIST)
+
+#define LIST_CHILD(child) ((child)->type==GLOBAL_LIST || (child)->type==STATEMENT_LIST || (child)->type==PRINT_LIST || \
+				(child)->type==EXPRESSION_LIST || (child)->type==VARIABLE_LIST)
+#define ARITHMETIC_CHILD(child)((1000001))
 
 
 void
@@ -12,7 +19,7 @@ node_print ( node_t *root, int nesting )
     {
         /* Print the type of node indented by the nesting level */
         //printf("node has %i children\n",root->n_children);
-        printf ( "%*c%s", nesting, ' ', node_string[root->type]);
+        printf ( "%*c%s with %lu children", nesting, ' ', node_string[root->type], root->n_children);
 
         /* For identifiers, strings, expressions and numbers,
          * print the data element also
@@ -60,64 +67,120 @@ node_init (node_t *nd, node_index_t type, void *data, uint64_t n_children, ...)
 void
 node_finalize ( node_t *discard )
 {
+    assert(discard != NULL);
+
     free(discard->data);
     free(discard->entry);
     free(discard->children);
-    free(discard);
 
+}
+/* Recursively remove the entire tree rooted at a node */
+void
+destroy_subtree ( node_t *discard )
+{
+	for(uint64_t i=0;i<discard->n_children;i++)
+	{
+		//check to ignore child nodes that are empty (empty lists)
+		if(!discard->children[i])
+			continue;
+		destroy_subtree(discard->children[i]);
+	}
+	node_finalize(discard);
 }
 
 
 
 //
-#define SINGLE_CHILD(node) ((node)->type==GLOBAL || (node)->type==STATEMENT || \
-                (node)->type==PRINT_ITEM || (node)->type==PARAMETER_LIST || (node)->type==ARGUMENT_LIST)
-#define LISTS 9001
-#define EXPRESSIONSS 9002
 
-void
-simplify_tree ( node_t **simplified, node_t *root )
+#define EXPRESSIONS 101
+
+void 
+simplify_single_node(node_t *parent, node_t** child, int i)
 {
-    *simplified = root;
-    //va_list arglist;
-    //va_start(arglist, root->n_children);
-    //root->type;
-    //root->data;
-    for (uint64_t i=0;i<root->n_children;i++)
-    {
-        if (SINGLE_CHILD(root->children[i]))
-        {
-            root->children[i]=
+	//printf("called single on %s and %i children\n",node_string[parent->type], parent->n_children);
 
-            *simplified=root_children[i];
-
-        }
-        simplify_tree(*, root->children[i]);
-
-    }
-    /*Delete nodes which can only ever have 1 child and no meaningful data
-    and associate their child directly with their parent
-
-    Delete internal nodes of list strucutres, leaving only a parent node with a list type, and all list items as its children.
-    print list items can be associated directly with the print statement.
-
-    Compute the value of subtrees representing arithmetic with constants, 
-    and replace them with their value
-    */
-
+	parent->children[i]=(*child)->children[0];
+	node_finalize(*child);
+	*child=parent->children[i];
 }
 
 
-/* Recursively remove the entire tree rooted at a node */
 void
-destroy_subtree ( node_t *discard )
+simplify_list(node_t *parent)
 {
-	for(int i=0;i<discard->n_children;i++)
-	{	
-		if (discard->children[i]!=NULL)
-		{		
-			destroy_subtree(discard->children[i]);
+
+	node_t* next=NULL;
+	for (uint64_t i=0; i<parent->n_children; i++)	
+	{
+		//checking is there exists a child of type list
+		if (LIST_CHILD(parent->children[i]))
+		{
+			next=parent->children[i];
 		}
 	}
-	node_finalize(discard);
+	//if child exists continue deeper
+	if (next)
+	{
+		//printf("called upon %s\n", node_string[parent->type]);
+		simplify_list(next);
+	}
+	//if no child of type list exists, replace it's child with current node
+	else 
+	{
+		return;
+	}
+	
+	//escaping routines merging on the way up
+	uint64_t new_size=parent->n_children+next->n_children-1;
+	printf("merging %s\n", node_string[parent->type]);
+	node_t** new_array;
+	//casts error sometimes, need to be changed somehow
+	new_array = realloc(parents->children, new_size*sizeof(node_t*));
+
+	for (uint64_t i=parent->n_children-1;i<new_size;i++)
+	{
+		parent->children[i]=next->children[i-parent->n_children];
+	}
+	node_finalize(next);
 }
+
+
+void
+simplify_arithmetic(node_t* parent)
+{
+	for (uint64_t i=0; i<parent->n_children; i++)
+	{
+		node_t* child=parent->children[i];
+		if 
+	}
+
+
+}
+
+
+
+void
+simplify_tree (node_t *root )
+{
+
+    for (uint64_t i=0;i<root->n_children; i++)
+    {
+    	node_t* child=root->children[i];
+    	if(!child)
+    	{
+    		printf("child of node %s is zero\n", node_string[root->type]);
+    		continue;
+    	}
+        if (SINGLE_CHILD(child))
+	       	simplify_single_node(root, &child, i);
+       	if (LIST_CHILD(child))
+       		printf("starting list routine\n");
+           	simplify_list(child);
+	    __simplify_lists(child);
+        if (ARITHMETIC_CHILD(child))
+        	simplify_arithmetic(child);
+        simplify_tree(child);
+
+    }
+}
+

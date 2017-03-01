@@ -1,23 +1,27 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <vslc.h>
+#include "vslc.h"
 
 node_t *root;
+node_t **simplified;
 
 int
 main ( int argc, char **argv )
 {
 
-	//root=(node_t*)malloc(sizeof(node_t));
-	//node_init(root, PROGRAM, NULL, ;
 
-	//while(1) { yylex(); }
 	root = NULL;
-	//yylex();
+
 	yyparse();
 	if (root != NULL) {
 	    printf("It works\n");
 	}
-	node_print ( root, 0 );
-	destroy_subtree ( root );
+	
+	//destroy_subtree ( root->child[]);
+
+	//node_print ( root, 0 );
+	simplify_tree(root);
+	node_print(root,0);
+
+	/
 }

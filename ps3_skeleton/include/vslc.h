@@ -9,7 +9,7 @@
 
 #include "nodetypes.h"
 #include "ir.h"
-#include "../src/y.tab.h"
+#include "y.tab.h"
 
 int yyerror ( const char *error );
 extern int yylineno;
@@ -17,5 +17,7 @@ extern int yylex ( void );
 extern char yytext[];
 
 extern node_t *root;
+void
+simplify_tree (node_t *root );
 
 #endif
