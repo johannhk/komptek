@@ -23,5 +23,5 @@ main ( int argc, char **argv )
 	simplify_tree(root);
 	node_print(root,0);
 
-	/
+	
 }

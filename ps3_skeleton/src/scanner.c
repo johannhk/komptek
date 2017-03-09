@@ -919,22 +919,22 @@ YY_RULE_SETUP
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 32 "src/scanner.l"
+#line 31 "src/scanner.l"
 { return NUMBER; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 33 "src/scanner.l"
+#line 32 "src/scanner.l"
 {  return IDENTIFIER; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 34 "src/scanner.l"
+#line 33 "src/scanner.l"
 { printf("Unknown character [%c]\n", yytext[0]); }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 36 "src/scanner.l"
+#line 35 "src/scanner.l"
 ECHO;
 	YY_BREAK
 #line 941 "<stdout>"
@@ -1950,7 +1950,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 36 "src/scanner.l"
+#line 35 "src/scanner.l"
 
 
 

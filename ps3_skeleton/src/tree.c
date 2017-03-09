@@ -9,7 +9,7 @@
 
 #define LIST_CHILD(child) ((child)->type==GLOBAL_LIST || (child)->type==STATEMENT_LIST || (child)->type==PRINT_LIST || \
 				(child)->type==EXPRESSION_LIST || (child)->type==VARIABLE_LIST)
-#define ARITHMETIC_CHILD(child)((1000001))
+#define ARITHMETIC_CHILD(child)((child->data=='*' || child->data=='/' || child->data=='+' child->data=='-'))
 
 
 void
@@ -72,6 +72,9 @@ node_finalize ( node_t *discard )
     free(discard->data);
     free(discard->entry);
     free(discard->children);
+    discard->data = NULL;
+    discard->entry = NULL;
+    discard->children = NULL;
 
 }
 /* Recursively remove the entire tree rooted at a node */
@@ -104,56 +107,77 @@ simplify_single_node(node_t *parent, node_t** child, int i)
 	*child=parent->children[i];
 }
 
+void
+simplify_list_rec(node_t* parent, node_t*** new_children, int depth)
+{
+    node_t* next=NULL;
+    for (uint64_t i=0; i<parent->n_children; i++)   
+    {
+        //checking is there exists a child of type list
+        if (LIST_CHILD(parent->children[i]))
+        {
+            next=parent->children[i];
+        }
+    }
+    //if child exists continue deeper
+    if (next)
+    {
+        simplify_list_rec(next, new_children, depth + 1);
+        (*new_children)[depth] = parent->children[1];
+    }
+    else
+    {
+        *new_children = malloc((depth + 1) * sizeof(node_t *));
+        (*new_children)[depth] = parent->children[0];
+    }
+    if (depth > 0) {
+        node_finalize(parent);
+    }
+}
+
 
 void
 simplify_list(node_t *parent)
 {
-
-	node_t* next=NULL;
-	for (uint64_t i=0; i<parent->n_children; i++)	
-	{
-		//checking is there exists a child of type list
-		if (LIST_CHILD(parent->children[i]))
-		{
-			next=parent->children[i];
-		}
-	}
-	//if child exists continue deeper
-	if (next)
-	{
-		//printf("called upon %s\n", node_string[parent->type]);
-		simplify_list(next);
-	}
-	//if no child of type list exists, replace it's child with current node
-	else 
-	{
-		return;
-	}
-	
-	//escaping routines merging on the way up
-	uint64_t new_size=parent->n_children+next->n_children-1;
-	printf("merging %s\n", node_string[parent->type]);
-	node_t** new_array;
-	//casts error sometimes, need to be changed somehow
-	new_array = realloc(parents->children, new_size*sizeof(node_t*));
-
-	for (uint64_t i=parent->n_children-1;i<new_size;i++)
-	{
-		parent->children[i]=next->children[i-parent->n_children];
-	}
-	node_finalize(next);
+    if(parent->n_children>1)
+    {
+        node_t** new_children;
+        simplify_list_rec(parent, &new_children, 0);
+        free(parent->children);
+        parent->children = new_children;
+    }
+    
 }
 
 
 void
 simplify_arithmetic(node_t* parent)
 {
-	for (uint64_t i=0; i<parent->n_children; i++)
-	{
-		node_t* child=parent->children[i];
-		if 
-	}
+	if (parent->n_children>1) 
+    {
+        for (uint64_t i=0; i<parent->n_children; i++)
+	    {
+            node_t** child=parent->children[i];
+            switch(child)
+            {
+                case '*':
 
+                case '/':
+
+                case '-':
+
+                case '+':
+
+            }
+
+        }
+
+    }
+    //handles case of unary
+    else
+    {
+        uint64_t new_node_data=(parent->children[0])->children[0]->data;
+    }
 
 }
 
@@ -171,14 +195,16 @@ simplify_tree (node_t *root )
     		printf("child of node %s is zero\n", node_string[root->type]);
     		continue;
     	}
-        if (SINGLE_CHILD(child))
+        if (SINGLE_CHILD(child)) {
 	       	simplify_single_node(root, &child, i);
-       	if (LIST_CHILD(child))
+        }
+       	if (LIST_CHILD(child)) {
        		printf("starting list routine\n");
            	simplify_list(child);
-	    __simplify_lists(child);
-        if (ARITHMETIC_CHILD(child))
+        }
+        if (ARITHMETIC_CHILD(child)) {
         	simplify_arithmetic(child);
+        }
         simplify_tree(child);
 
     }

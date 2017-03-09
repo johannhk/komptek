@@ -28,7 +28,6 @@ VAR			{  return VAR; }
 
 
 \"(\\.|[^"])*\"		{  return STRING; }
-
 [0-9]+           	{ return NUMBER; }
 [a-zA-Z_][a-zA-Z0-9_]* {  return IDENTIFIER; }
 .                       { printf("Unknown character [%c]\n", yytext[0]); }
