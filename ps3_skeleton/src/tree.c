@@ -9,7 +9,9 @@
 
 #define LIST_CHILD(child) ((child)->type==GLOBAL_LIST || (child)->type==STATEMENT_LIST || (child)->type==PRINT_LIST || \
 				(child)->type==EXPRESSION_LIST || (child)->type==VARIABLE_LIST)
-#define ARITHMETIC_CHILD(child)((child->data=='*' || child->data=='/' || child->data=='+' child->data=='-'))
+#define ARIT_CHILD(child) ( *(char*)(child)->data=='*' || *(char*)(child)->data=='/' || *(char*)(child)->data=='+' ||\
+                 *(char*)(child)->data=='-')
+#define EXPR_CHILD(child) ( (child)->type==  || (child)->type==GLOBAL_LIST  )
 
 
 void
@@ -93,10 +95,6 @@ destroy_subtree ( node_t *discard )
 
 
 
-//
-
-#define EXPRESSIONS 101
-
 void 
 simplify_single_node(node_t *parent, node_t** child, int i)
 {
@@ -151,32 +149,45 @@ simplify_list(node_t *parent)
 
 
 void
-simplify_arithmetic(node_t* parent)
+simplify_exp(node_t* parent)
 {
 	if (parent->n_children>1) 
     {
         for (uint64_t i=0; i<parent->n_children; i++)
 	    {
-            node_t** child=parent->children[i];
-            switch(child)
+
+            node_t* child=parent->children[i];
+            if(EXPR_CHILD)
+
+
+
+
+
+
+
+
+            switch(*(char*)child->data)
             {
                 case '*':
-
+                    break;
                 case '/':
-
+                    break;
                 case '-':
-
+                    if(child)
+                    break;
                 case '+':
-
+                    break;
+                default:
+                    break;
             }
 
         }
 
     }
-    //handles case of unary
+
     else
     {
-        uint64_t new_node_data=(parent->children[0])->children[0]->data;
+        
     }
 
 }
@@ -202,8 +213,8 @@ simplify_tree (node_t *root )
        		printf("starting list routine\n");
            	simplify_list(child);
         }
-        if (ARITHMETIC_CHILD(child)) {
-        	simplify_arithmetic(child);
+        if (ARIT_CHILD(child)) {
+        	//simplify_arithmetic(child);
         }
         simplify_tree(child);
 

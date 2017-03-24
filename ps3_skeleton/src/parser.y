@@ -235,7 +235,7 @@ string
 number		
     : NUMBER 	{ 
 	        $$ = malloc (sizeof(node_t));
-			int64_t* buf=(int64_t*) malloc(sizeof(int64_t));
+			int64_t* buf= malloc(sizeof(int64_t));
 			*buf=strtol(yytext,NULL, 10);
 			node_init($$,NUMBER_DATA, buf, 0);	
 	}

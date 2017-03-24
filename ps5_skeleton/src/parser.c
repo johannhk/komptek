@@ -64,10 +64,23 @@
 /* Copy the first part of user declarations.  */
 #line 1 "src/parser.y" /* yacc.c:339  */
 
-#include "../include/vslc.h"
-#include <stdio.h>
+#include <vslc.h>
 
-#line 71 "y.tab.c" /* yacc.c:339  */
+#define N0C(n,t,d) do { \
+    node_init ( n = malloc(sizeof(node_t)), t, d, 0 ); \
+} while ( false )
+#define N1C(n,t,d,a) do { \
+    node_init ( n = malloc(sizeof(node_t)), t, d, 1, a ); \
+} while ( false )
+#define N2C(n,t,d,a,b) do { \
+    node_init ( n = malloc(sizeof(node_t)), t, d, 2, a, b ); \
+} while ( false )
+#define N3C(n,t,d,a,b,c) do { \
+    node_init ( n = malloc(sizeof(node_t)), t, d, 3, a, b, c ); \
+} while ( false )
+
+
+#line 84 "y.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -137,7 +150,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 141 "y.tab.c" /* yacc.c:358  */
+#line 154 "y.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -436,12 +449,12 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    19,    19,    28,    31,    38,    41,    46,    50,    55,
-      59,    64,    67,    72,    76,    80,    83,    86,    88,    91,
-      94,    99,   106,   109,   112,   115,   118,   121,   124,   129,
-     132,   137,   142,   147,   152,   157,   160,   165,   170,   173,
-     176,   181,   184,   187,   190,   193,   196,   198,   200,   203,
-     208,   213,   215,   219,   227,   236
+       0,    29,    29,    32,    33,    36,    37,    40,    41,    44,
+      45,    48,    49,    52,    53,    56,    57,    60,    61,    64,
+      65,    68,    72,    73,    74,    75,    76,    77,    78,    81,
+      83,    86,    90,    94,    98,   102,   104,   108,   112,   114,
+     116,   120,   122,   124,   126,   128,   130,   131,   132,   134,
+     138,   141,   143,   146,   147,   153
 };
 #endif
 
@@ -459,8 +472,8 @@ static const char *const yytname[] =
   "declaration_list", "function", "statement", "block",
   "assignment_statement", "return_statement", "print_statement",
   "null_statement", "if_statement", "while_statement", "relation",
-  "expression", "declaration", "print_item", "identifier", "string",
-  "number", YY_NULLPTR
+  "expression", "declaration", "print_item", "identifier", "number",
+  "string", YY_NULLPTR
 };
 #endif
 
@@ -509,8 +522,8 @@ static const yytype_uint8 yydefact[] =
        0,     0,     0,     0,     2,     3,     5,     6,    53,     0,
       50,    13,     1,     4,    18,     0,    17,     0,    14,     0,
        0,     0,    34,     0,     0,     0,    21,    28,    22,    23,
-      24,    27,    25,    26,     0,     0,    55,    54,     0,    33,
-      51,     9,    48,    52,    47,    32,     0,     0,     0,     0,
+      24,    27,    25,    26,     0,     0,    54,    55,     0,    33,
+      51,     9,    48,    47,    52,    32,     0,     0,     0,     0,
        0,     7,    19,     0,    45,     0,     0,     0,     0,     0,
        0,    16,     0,     0,     0,     0,     0,    30,     8,     0,
       20,     0,    46,    10,    41,    42,    43,    44,    15,     0,
@@ -1285,439 +1298,335 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 19 "src/parser.y" /* yacc.c:1646  */
-    {
-			(yyval) = malloc ( sizeof(node_t) );
-			node_init((yyval), PROGRAM, 0, 1, (yyvsp[0]));
-			//printf("root node init\n");
-			root=(yyval);}
-#line 1295 "y.tab.c" /* yacc.c:1646  */
+#line 29 "src/parser.y" /* yacc.c:1646  */
+    { N1C ( root, PROGRAM, NULL, (yyvsp[0]) ); }
+#line 1304 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 3:
-#line 28 "src/parser.y" /* yacc.c:1646  */
-    {
-		(yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), GLOBAL_LIST, 0, 1, (yyvsp[0])); }
-#line 1303 "y.tab.c" /* yacc.c:1646  */
+#line 32 "src/parser.y" /* yacc.c:1646  */
+    { N1C ( (yyval), GLOBAL_LIST, NULL, (yyvsp[0]) ); }
+#line 1310 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 4:
-#line 31 "src/parser.y" /* yacc.c:1646  */
-    {
-		(yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), GLOBAL_LIST, 0, 2, (yyvsp[-1]), (yyvsp[0]));
-		root=(yyval); }
-#line 1312 "y.tab.c" /* yacc.c:1646  */
+#line 33 "src/parser.y" /* yacc.c:1646  */
+    { N2C ( (yyval), GLOBAL_LIST, NULL, (yyvsp[-1]), (yyvsp[0]) ); }
+#line 1316 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 5:
-#line 38 "src/parser.y" /* yacc.c:1646  */
-    { 
-        (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), GLOBAL, 0, 1, (yyvsp[0])); }
-#line 1320 "y.tab.c" /* yacc.c:1646  */
+#line 36 "src/parser.y" /* yacc.c:1646  */
+    { N1C ( (yyval), GLOBAL, NULL, (yyvsp[0]) ); }
+#line 1322 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 41 "src/parser.y" /* yacc.c:1646  */
-    { 
-	    (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), GLOBAL, 0, 1, (yyvsp[0])); }
+#line 37 "src/parser.y" /* yacc.c:1646  */
+    { N1C ( (yyval), GLOBAL, NULL, (yyvsp[0]) ); }
 #line 1328 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 46 "src/parser.y" /* yacc.c:1646  */
-    { 
-        (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), STATEMENT_LIST, 0, 1, (yyvsp[0])); }
-#line 1336 "y.tab.c" /* yacc.c:1646  */
+#line 40 "src/parser.y" /* yacc.c:1646  */
+    { N1C ( (yyval), STATEMENT_LIST, NULL, (yyvsp[0]) ); }
+#line 1334 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 8:
-#line 50 "src/parser.y" /* yacc.c:1646  */
-    { (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), STATEMENT_LIST, 0, 2, (yyvsp[-1]), (yyvsp[0])); }
-#line 1343 "y.tab.c" /* yacc.c:1646  */
+#line 41 "src/parser.y" /* yacc.c:1646  */
+    { N2C ( (yyval), STATEMENT_LIST, NULL, (yyvsp[-1]), (yyvsp[0]) ); }
+#line 1340 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 55 "src/parser.y" /* yacc.c:1646  */
-    { 
-        (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), PRINT_LIST, 0, 1, (yyvsp[0])); }
-#line 1351 "y.tab.c" /* yacc.c:1646  */
+#line 44 "src/parser.y" /* yacc.c:1646  */
+    { N1C ( (yyval), PRINT_LIST, NULL, (yyvsp[0]) ); }
+#line 1346 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 59 "src/parser.y" /* yacc.c:1646  */
-    { 
-	    (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), PRINT_LIST, strdup(","), 2, (yyvsp[-2]), (yyvsp[0])); }
-#line 1359 "y.tab.c" /* yacc.c:1646  */
+#line 45 "src/parser.y" /* yacc.c:1646  */
+    { N2C ( (yyval), PRINT_LIST, NULL, (yyvsp[-2]), (yyvsp[0]) ); }
+#line 1352 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 64 "src/parser.y" /* yacc.c:1646  */
-    { 
-        (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), EXPRESSION_LIST, 0, 1, (yyvsp[0])); }
-#line 1367 "y.tab.c" /* yacc.c:1646  */
+#line 48 "src/parser.y" /* yacc.c:1646  */
+    { N1C ( (yyval), EXPRESSION_LIST, NULL, (yyvsp[0]) ); }
+#line 1358 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 67 "src/parser.y" /* yacc.c:1646  */
-    {
-	     (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), EXPRESSION_LIST, strdup(","), 2, (yyvsp[-2]), (yyvsp[0])); }
-#line 1375 "y.tab.c" /* yacc.c:1646  */
+#line 49 "src/parser.y" /* yacc.c:1646  */
+    { N2C((yyval), EXPRESSION_LIST, NULL, (yyvsp[-2]), (yyvsp[0])); }
+#line 1364 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 72 "src/parser.y" /* yacc.c:1646  */
-    { 
-        (yyval) = (node_t *) malloc ( sizeof(node_t) );
-        node_init((yyval), VARIABLE_LIST, 0, 1, (yyvsp[0])); }
-#line 1383 "y.tab.c" /* yacc.c:1646  */
+#line 52 "src/parser.y" /* yacc.c:1646  */
+    { N1C ( (yyval), VARIABLE_LIST, NULL, (yyvsp[0]) ); }
+#line 1370 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 14:
-#line 76 "src/parser.y" /* yacc.c:1646  */
-    { (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), VARIABLE_LIST, 0, 2, (yyvsp[-2]), (yyvsp[0])); }
-#line 1390 "y.tab.c" /* yacc.c:1646  */
+#line 53 "src/parser.y" /* yacc.c:1646  */
+    { N2C ( (yyval), VARIABLE_LIST, NULL, (yyvsp[-2]), (yyvsp[0]) ); }
+#line 1376 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 80 "src/parser.y" /* yacc.c:1646  */
-    { 
-        (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), ARGUMENT_LIST, 0, 1, (yyvsp[0])); }
-#line 1398 "y.tab.c" /* yacc.c:1646  */
+#line 56 "src/parser.y" /* yacc.c:1646  */
+    { N1C ( (yyval), ARGUMENT_LIST, NULL, (yyvsp[0]) ); }
+#line 1382 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 83 "src/parser.y" /* yacc.c:1646  */
-    {(yyval) = NULL;}
-#line 1404 "y.tab.c" /* yacc.c:1646  */
+#line 57 "src/parser.y" /* yacc.c:1646  */
+    { (yyval) = NULL; }
+#line 1388 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 86 "src/parser.y" /* yacc.c:1646  */
-    { (yyval) = (node_t *) malloc ( sizeof(node_t) );
-    	node_init((yyval), PARAMETER_LIST, 0, 1, (yyvsp[0])); }
-#line 1411 "y.tab.c" /* yacc.c:1646  */
+#line 60 "src/parser.y" /* yacc.c:1646  */
+    { N1C ( (yyval), PARAMETER_LIST, NULL, (yyvsp[0]) ); }
+#line 1394 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 88 "src/parser.y" /* yacc.c:1646  */
-    {(yyval) = NULL;}
-#line 1417 "y.tab.c" /* yacc.c:1646  */
+#line 61 "src/parser.y" /* yacc.c:1646  */
+    { (yyval) = NULL; }
+#line 1400 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 91 "src/parser.y" /* yacc.c:1646  */
-    { 
-        (yyval) = (node_t *) malloc ( sizeof(node_t) );
-        node_init((yyval), DECLARATION_LIST, 0, 1, (yyvsp[0])); }
-#line 1425 "y.tab.c" /* yacc.c:1646  */
+#line 64 "src/parser.y" /* yacc.c:1646  */
+    { N1C ( (yyval), DECLARATION_LIST, NULL, (yyvsp[0]) ); }
+#line 1406 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 94 "src/parser.y" /* yacc.c:1646  */
-    { 
-	    (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), DECLARATION_LIST , 0, 2, (yyvsp[-1]), (yyvsp[0])); }
-#line 1433 "y.tab.c" /* yacc.c:1646  */
+#line 65 "src/parser.y" /* yacc.c:1646  */
+    { N2C ((yyval), DECLARATION_LIST, NULL, (yyvsp[-1]), (yyvsp[0])); }
+#line 1412 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 99 "src/parser.y" /* yacc.c:1646  */
-    { 
-        (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), FUNCTION , 0, 3, (yyvsp[-4]), (yyvsp[-2]), (yyvsp[0]));
-		}
-#line 1442 "y.tab.c" /* yacc.c:1646  */
+#line 69 "src/parser.y" /* yacc.c:1646  */
+    { N3C ( (yyval), FUNCTION, NULL, (yyvsp[-4]), (yyvsp[-2]), (yyvsp[0]) ); }
+#line 1418 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 106 "src/parser.y" /* yacc.c:1646  */
-    { 
-        (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), STATEMENT, 0, 1, (yyvsp[0])); }
-#line 1450 "y.tab.c" /* yacc.c:1646  */
+#line 72 "src/parser.y" /* yacc.c:1646  */
+    { N1C ( (yyval), STATEMENT, NULL, (yyvsp[0]) ); }
+#line 1424 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 109 "src/parser.y" /* yacc.c:1646  */
-    { 
-	    (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), STATEMENT, 0, 1, (yyvsp[0])); }
-#line 1458 "y.tab.c" /* yacc.c:1646  */
+#line 73 "src/parser.y" /* yacc.c:1646  */
+    { N1C ( (yyval), STATEMENT, NULL, (yyvsp[0]) ); }
+#line 1430 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 112 "src/parser.y" /* yacc.c:1646  */
-    { 
-	    (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), STATEMENT, 0, 1, (yyvsp[0])); }
-#line 1466 "y.tab.c" /* yacc.c:1646  */
+#line 74 "src/parser.y" /* yacc.c:1646  */
+    { N1C ( (yyval), STATEMENT, NULL, (yyvsp[0]) ); }
+#line 1436 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 115 "src/parser.y" /* yacc.c:1646  */
-    {
-	    (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), STATEMENT, 0, 1, (yyvsp[0])); }
-#line 1474 "y.tab.c" /* yacc.c:1646  */
+#line 75 "src/parser.y" /* yacc.c:1646  */
+    { N1C ( (yyval), STATEMENT, NULL, (yyvsp[0]) ); }
+#line 1442 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 118 "src/parser.y" /* yacc.c:1646  */
-    { 
-	    (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), STATEMENT, 0, 1, (yyvsp[0])); }
-#line 1482 "y.tab.c" /* yacc.c:1646  */
+#line 76 "src/parser.y" /* yacc.c:1646  */
+    { N1C ( (yyval), STATEMENT, NULL, (yyvsp[0]) ); }
+#line 1448 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 121 "src/parser.y" /* yacc.c:1646  */
-    { 
-	    (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), STATEMENT, 0, 1, (yyvsp[0])); }
-#line 1490 "y.tab.c" /* yacc.c:1646  */
+#line 77 "src/parser.y" /* yacc.c:1646  */
+    { N1C ( (yyval), STATEMENT, NULL, (yyvsp[0]) ); }
+#line 1454 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 124 "src/parser.y" /* yacc.c:1646  */
-    { 
-	    (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), STATEMENT, 0, 1, (yyvsp[0])); }
-#line 1498 "y.tab.c" /* yacc.c:1646  */
+#line 78 "src/parser.y" /* yacc.c:1646  */
+    { N1C ( (yyval), STATEMENT, NULL, (yyvsp[0]) ); }
+#line 1460 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 29:
-#line 129 "src/parser.y" /* yacc.c:1646  */
-    { 
-        (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), BLOCK, 0, 2, (yyvsp[-2]), (yyvsp[-1])); }
-#line 1506 "y.tab.c" /* yacc.c:1646  */
+#line 82 "src/parser.y" /* yacc.c:1646  */
+    { N2C ((yyval), BLOCK, NULL, (yyvsp[-2]), (yyvsp[-1])); }
+#line 1466 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 30:
-#line 132 "src/parser.y" /* yacc.c:1646  */
-    {
-	    (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), BLOCK, 0, 1, (yyvsp[-1])); }
-#line 1514 "y.tab.c" /* yacc.c:1646  */
+#line 83 "src/parser.y" /* yacc.c:1646  */
+    { N1C ((yyval), BLOCK, NULL, (yyvsp[-1]) ); }
+#line 1472 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 137 "src/parser.y" /* yacc.c:1646  */
-    { 
-        (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), ASSIGNMENT_STATEMENT, strdup(":="), 2, (yyvsp[-3]), (yyvsp[0])); }
-#line 1522 "y.tab.c" /* yacc.c:1646  */
+#line 87 "src/parser.y" /* yacc.c:1646  */
+    { N2C ( (yyval), ASSIGNMENT_STATEMENT, NULL, (yyvsp[-3]), (yyvsp[0]) ); }
+#line 1478 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 142 "src/parser.y" /* yacc.c:1646  */
-    { 
-        (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), RETURN_STATEMENT, 0, 1, (yyvsp[0])); }
-#line 1530 "y.tab.c" /* yacc.c:1646  */
+#line 91 "src/parser.y" /* yacc.c:1646  */
+    { N1C ( (yyval), RETURN_STATEMENT, NULL, (yyvsp[0]) ); }
+#line 1484 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 147 "src/parser.y" /* yacc.c:1646  */
-    { 
-        (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), PRINT_STATEMENT, 0, 1, (yyvsp[0])); }
-#line 1538 "y.tab.c" /* yacc.c:1646  */
+#line 95 "src/parser.y" /* yacc.c:1646  */
+    { N1C ( (yyval), PRINT_STATEMENT, NULL, (yyvsp[0]) ); }
+#line 1490 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 152 "src/parser.y" /* yacc.c:1646  */
-    { 
-        (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), NULL_STATEMENT, 0, 0); }
-#line 1546 "y.tab.c" /* yacc.c:1646  */
+#line 99 "src/parser.y" /* yacc.c:1646  */
+    { N0C ( (yyval), NULL_STATEMENT, NULL ); }
+#line 1496 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 157 "src/parser.y" /* yacc.c:1646  */
-    { 
-        (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), IF_STATEMENT, 0, 2, (yyvsp[-2]), (yyvsp[0])); }
-#line 1554 "y.tab.c" /* yacc.c:1646  */
+#line 103 "src/parser.y" /* yacc.c:1646  */
+    { N2C ( (yyval), IF_STATEMENT, NULL, (yyvsp[-2]), (yyvsp[0]) ); }
+#line 1502 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 160 "src/parser.y" /* yacc.c:1646  */
-    { 
-	    (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), IF_STATEMENT, 0, 3, (yyvsp[-4]), (yyvsp[-2]), (yyvsp[0])); }
-#line 1562 "y.tab.c" /* yacc.c:1646  */
+#line 105 "src/parser.y" /* yacc.c:1646  */
+    { N3C ( (yyval), IF_STATEMENT, NULL, (yyvsp[-4]), (yyvsp[-2]), (yyvsp[0]) ); }
+#line 1508 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 165 "src/parser.y" /* yacc.c:1646  */
-    { 
-        (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), WHILE_STATEMENT, 0, 2, (yyvsp[-2]), (yyvsp[0])); }
-#line 1570 "y.tab.c" /* yacc.c:1646  */
+#line 109 "src/parser.y" /* yacc.c:1646  */
+    { N2C ( (yyval), WHILE_STATEMENT, NULL, (yyvsp[-2]), (yyvsp[0]) ); }
+#line 1514 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 38:
-#line 170 "src/parser.y" /* yacc.c:1646  */
-    { 
-        (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), RELATION, 0, 2, (yyvsp[-2]), (yyvsp[0])); }
-#line 1578 "y.tab.c" /* yacc.c:1646  */
+#line 113 "src/parser.y" /* yacc.c:1646  */
+    { N2C ( (yyval), RELATION, strdup("="), (yyvsp[-2]), (yyvsp[0]) ); }
+#line 1520 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 173 "src/parser.y" /* yacc.c:1646  */
-    { 
-	    (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), RELATION, 0, 2, (yyvsp[-2]), (yyvsp[0])); }
-#line 1586 "y.tab.c" /* yacc.c:1646  */
+#line 115 "src/parser.y" /* yacc.c:1646  */
+    { N2C ( (yyval), RELATION, strdup("<"), (yyvsp[-2]), (yyvsp[0]) ); }
+#line 1526 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 176 "src/parser.y" /* yacc.c:1646  */
-    { 
-	    (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), RELATION, 0, 2, (yyvsp[-2]), (yyvsp[0])); }
-#line 1594 "y.tab.c" /* yacc.c:1646  */
+#line 117 "src/parser.y" /* yacc.c:1646  */
+    { N2C ( (yyval), RELATION, strdup(">"), (yyvsp[-2]), (yyvsp[0]) ); }
+#line 1532 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 181 "src/parser.y" /* yacc.c:1646  */
-    { 
-        (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), EXPRESSION, strdup("+"), 2, (yyvsp[-2]), (yyvsp[0])); }
-#line 1602 "y.tab.c" /* yacc.c:1646  */
+#line 121 "src/parser.y" /* yacc.c:1646  */
+    { N2C ( (yyval), EXPRESSION, strdup("+"), (yyvsp[-2]), (yyvsp[0]) ); }
+#line 1538 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 42:
-#line 184 "src/parser.y" /* yacc.c:1646  */
-    { 
-	    (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), EXPRESSION, strdup("-"), 2, (yyvsp[-2]), (yyvsp[0])); }
-#line 1610 "y.tab.c" /* yacc.c:1646  */
+#line 123 "src/parser.y" /* yacc.c:1646  */
+    { N2C ( (yyval), EXPRESSION, strdup("-"), (yyvsp[-2]), (yyvsp[0]) ); }
+#line 1544 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 187 "src/parser.y" /* yacc.c:1646  */
-    { 
-	    (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), EXPRESSION, strdup("*"), 2, (yyvsp[-2]), (yyvsp[0])); }
-#line 1618 "y.tab.c" /* yacc.c:1646  */
+#line 125 "src/parser.y" /* yacc.c:1646  */
+    { N2C ( (yyval), EXPRESSION, strdup("*"), (yyvsp[-2]), (yyvsp[0]) ); }
+#line 1550 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 190 "src/parser.y" /* yacc.c:1646  */
-    { 
-	    (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), EXPRESSION, strdup("/"), 2, (yyvsp[-2]), (yyvsp[0])); }
-#line 1626 "y.tab.c" /* yacc.c:1646  */
+#line 127 "src/parser.y" /* yacc.c:1646  */
+    { N2C ( (yyval), EXPRESSION, strdup("/"), (yyvsp[-2]), (yyvsp[0]) ); }
+#line 1556 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 193 "src/parser.y" /* yacc.c:1646  */
-    { 
-	    (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), EXPRESSION, strdup("-"), 1, (yyvsp[0])); }
-#line 1634 "y.tab.c" /* yacc.c:1646  */
+#line 129 "src/parser.y" /* yacc.c:1646  */
+    { N1C ( (yyval), EXPRESSION, strdup("-"), (yyvsp[0]) ); }
+#line 1562 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 46:
-#line 196 "src/parser.y" /* yacc.c:1646  */
-    { 
-	    (yyval) = (yyvsp[-1]); }
-#line 1641 "y.tab.c" /* yacc.c:1646  */
+#line 130 "src/parser.y" /* yacc.c:1646  */
+    { (yyval) = (yyvsp[-1]); }
+#line 1568 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 47:
-#line 198 "src/parser.y" /* yacc.c:1646  */
-    { (yyval) = (node_t *) malloc ( sizeof(node_t) );   
-		node_init((yyval), EXPRESSION, 0, 1, (yyvsp[0])); }
-#line 1648 "y.tab.c" /* yacc.c:1646  */
+#line 131 "src/parser.y" /* yacc.c:1646  */
+    { N1C ( (yyval), EXPRESSION, NULL, (yyvsp[0]) ); }
+#line 1574 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 48:
-#line 200 "src/parser.y" /* yacc.c:1646  */
-    { 
-	    (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), EXPRESSION, 0, 1, (yyvsp[0])); }
-#line 1656 "y.tab.c" /* yacc.c:1646  */
+#line 133 "src/parser.y" /* yacc.c:1646  */
+    { N1C ( (yyval), EXPRESSION, NULL, (yyvsp[0]) ); }
+#line 1580 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 49:
-#line 203 "src/parser.y" /* yacc.c:1646  */
-    { 
-	    (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), EXPRESSION, 0, 2, (yyvsp[-3]), (yyvsp[-1])); }
-#line 1664 "y.tab.c" /* yacc.c:1646  */
+#line 135 "src/parser.y" /* yacc.c:1646  */
+    { N2C ( (yyval), EXPRESSION, NULL, (yyvsp[-3]), (yyvsp[-1]) ); }
+#line 1586 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 50:
-#line 208 "src/parser.y" /* yacc.c:1646  */
-    {
-        (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), DECLARATION, 0, 1, (yyvsp[0])); }
-#line 1672 "y.tab.c" /* yacc.c:1646  */
+#line 138 "src/parser.y" /* yacc.c:1646  */
+    { N1C ( (yyval), DECLARATION, NULL, (yyvsp[0]) ); }
+#line 1592 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 213 "src/parser.y" /* yacc.c:1646  */
-    { (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), PRINT_ITEM, 0, 1, (yyvsp[0])); }
-#line 1679 "y.tab.c" /* yacc.c:1646  */
+#line 142 "src/parser.y" /* yacc.c:1646  */
+    { N1C ( (yyval), PRINT_ITEM, NULL, (yyvsp[0]) ); }
+#line 1598 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 52:
-#line 215 "src/parser.y" /* yacc.c:1646  */
-    { (yyval) = (node_t *) malloc ( sizeof(node_t) );
-		node_init((yyval), PRINT_ITEM, 0, 1, (yyvsp[0])); }
-#line 1686 "y.tab.c" /* yacc.c:1646  */
+#line 144 "src/parser.y" /* yacc.c:1646  */
+    { N1C ( (yyval), PRINT_ITEM, NULL, (yyvsp[0]) ); }
+#line 1604 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 53:
-#line 219 "src/parser.y" /* yacc.c:1646  */
-    {
-		(yyval)=(node_t *) malloc ( sizeof(node_t) );
-		char* buf=strdup(yytext);
-		node_init((yyval),IDENTIFIER_DATA, buf, 0);
-	}
-#line 1696 "y.tab.c" /* yacc.c:1646  */
+#line 146 "src/parser.y" /* yacc.c:1646  */
+    { N0C((yyval), IDENTIFIER_DATA, strdup(yytext) ); }
+#line 1610 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 54:
-#line 228 "src/parser.y" /* yacc.c:1646  */
+#line 148 "src/parser.y" /* yacc.c:1646  */
     {
-		(yyval)=(node_t *) malloc ( sizeof(node_t) );
-		char* buf=strdup(yytext);
-		node_init((yyval),STRING_DATA, buf, 0);			
-	}
-#line 1706 "y.tab.c" /* yacc.c:1646  */
+        int64_t *value = malloc ( sizeof(int64_t) );
+        *value = strtol ( yytext, NULL, 10 );
+        N0C((yyval), NUMBER_DATA, value );
+      }
+#line 1620 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 55:
-#line 236 "src/parser.y" /* yacc.c:1646  */
-    { 
-	        (yyval) = malloc (sizeof(node_t));
-			int64_t* buf= malloc(sizeof(int64_t));
-			*buf=strtol(yytext,NULL, 10);
-			node_init((yyval),NUMBER_DATA, buf, 0);	
-	}
-#line 1717 "y.tab.c" /* yacc.c:1646  */
+#line 153 "src/parser.y" /* yacc.c:1646  */
+    { N0C((yyval), STRING_DATA, strdup(yytext) ); }
+#line 1626 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1721 "y.tab.c" /* yacc.c:1646  */
+#line 1630 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1945,9 +1854,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 244 "src/parser.y" /* yacc.c:1906  */
-
-
+#line 154 "src/parser.y" /* yacc.c:1906  */
 
 
 int
@@ -1956,4 +1863,3 @@ yyerror ( const char *error )
     fprintf ( stderr, "%s on line %d\n", error, yylineno );
     exit ( EXIT_FAILURE );
 }
-
