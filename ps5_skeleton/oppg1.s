@@ -42,7 +42,7 @@ if:
 else:
 
 	movq $str, %rdi #put string as argument 0
-	movq -8(%rbp), %rsi #put n in argument 0
+	movq -8(%rbp), %rsi #put n in argument 1
 	call printf
 	jmp return
 	
@@ -53,6 +53,6 @@ return:
 main:
 	pushq %rbp	#save the basepointer
 	movq %rsp, 	%rbp #set new base pointer
-	movq $322668449, %rdi
+	movq $1836311903, %rdi
 	call factor
 	jmp return

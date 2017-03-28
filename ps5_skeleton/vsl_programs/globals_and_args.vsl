@@ -13,7 +13,8 @@ BEGIN
 
     // Assignment of expression w. global vars
     z := ((x+y)*(x-y))/-y
-
+    
+    //x := ((x+y)*(x-y))/y
     PRINT "\nReturning result into shell env. variable '$?'"
     PRINT "'echo $?' displays last return value (as unsigned byte).\n"
     RETURN z
