@@ -53,6 +53,6 @@ return:
 main:
 	pushq %rbp	#save the basepointer
 	movq %rsp, 	%rbp #set new base pointer
-	movq $1836311903, %rdi
+	movq $1836311903	, %rdi
 	call factor
 	jmp return

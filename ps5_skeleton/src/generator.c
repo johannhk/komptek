@@ -15,6 +15,10 @@ static const char *record[6] = {
 #define PRTARG1(op, a, ...)    printf("\t" #op "  \t" #a "\n", __VA_ARGS__)
 #define PRTARG2(op, a, b, ...) printf("\t" #op "  \t" #a ", " #b "\n", __VA_ARGS__)
 
+#define LABEL(a)    printf(#a ":\n")
+#define LABELARG(a, ...)    printf(#a ":\n", __VA_ARGS__)
+
+static size_t if_count=0, while_count=0;
 
 
 
@@ -274,6 +278,18 @@ generate_function_locals(symbol_t* func)
 }
 
 static void
+generate_if_assignment(symbol_t* func, node_t* root)
+{
+
+
+
+
+}
+
+
+
+
+static void
 traverse_(symbol_t* func, node_t* root)
 {
 
@@ -296,6 +312,7 @@ traverse_(symbol_t* func, node_t* root)
         traverse_(func, root->children[i]);    
     }
 }
+
 
 
 
