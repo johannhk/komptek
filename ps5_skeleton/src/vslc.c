@@ -17,10 +17,10 @@ main ( int argc, char **argv )
     for ( size_t i=0; i<n_globals; i++ )
         if ( global_list[i]->type == SYM_FUNCTION )
             bind_names ( global_list[i], global_list[i]->node );
-    /*print_symbols();
-    printf("BINDINGS\n");
-    print_bindings(root);
-    */
+    //print_symbols();
+    //printf("BINDINGS\n");
+    //print_bindings(root);
+    
     printf("\n\n");
     generate_program ();    
 

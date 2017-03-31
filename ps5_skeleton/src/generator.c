@@ -19,7 +19,8 @@ static const char *record[6] = {
 #define LABELARG(a, ...)    printf(#a ":\n", __VA_ARGS__)
 
 static size_t if_count=0, while_count=0;
-
+static void
+traverse_(symbol_t* func, node_t* root);
 
 
 static void
@@ -52,7 +53,6 @@ generate_global_names(symbol_t** global_list, size_t n_globals)
             printf("_%s: .zero 8\n", global_list[i]->name);
     }
 }
-
 
 
 
@@ -103,6 +103,7 @@ generate_main ( symbol_t *first )
     puts ( "END:" );
     puts ( "\tmovq %rax, %rdi" );
     puts ( "\tcall exit" );
+    puts ("");
 }
 
 char*
@@ -131,68 +132,91 @@ generate_expression(symbol_t* func, node_t* expr)
 {
     char* id_adr;
     
-    switch(expr->type)
+    //function
+    if(!expr->data)
     {
-        case IDENTIFIER_DATA:
-            id_adr=get_entry_addr(func, expr->entry);
-            PRTARG2(movq, %s, %%rax, id_adr);
-            break;
-        case NUMBER_DATA:
-            //id_adr=get_entry_addr(func, expr->entry);
-            PRTARG2(movq, %i, %%rax, *((int*)expr->data));
-            break;
-        case EXPRESSION:
-            
-            if(expr->n_children==2)
-            {
-                //left hand side of expression
-                generate_expression(func, expr->children[0]);
-                //put on stack while getting right side
-                PRT1(pushq, %rax);
-                //right hand side of expression in rax
-                generate_expression(func, expr->children[1]);
-                //pop left hand side to r8
-                PRT1(popq, %r8);
-                
-            }
-            //finds unary and return before switch case
-            else
-            {
-                puts("\t#unary minus");
-                id_adr=get_entry_addr(func, expr->children[0]->entry);
-                PRTARG1(negq, %s, id_adr);
-                return;
-            }
-
-            switch(*(char*)expr->data)
-            {
-                case '+':
-                    puts("\t#addition");
-                    PRT2(addq, %r8, %rax);
-                    break;
-                case '-':
-                    puts("\t#subtraction");
-                    PRT2(xchg, %rax, %r8);
-                    PRT2(subq, %r8, %rax);
-                    break;
-                case '*':
-                    puts("\t#multiplication");
-                    PRT0(cqo);
-                    PRT1(imulq, %r8);
-                    break;
-                case '/':
-                    puts("\t#division");
-                    PRT2(xchg, %rax, %r8);
-                    PRT0(cqo);
-                    PRT1(idivq, %r8);
-                    break;
-                default:
-                    return;
-
-            }
+    	PRT0(#FUNCTION CALL);
+    	node_t* args=expr->children[1];
+    	for(int i=0;i<args->n_children;i++)
+    	{
+    		if(i<=5){
+				generate_expression(func, args->children[i]);
+				PRTARG2(movq, %%rax, %s, record[i]);	
+    		}
+    		else {
+    			generate_expression(func, args->children[i]);
+    			PRT1(pushq, %rax);
+    		}
+    	}
+    	PRTARG1(call, _%s, (char*) expr->children[0]->data);
+    	puts("");
+    	return;
     }
 
-    
+    else{
+	    switch(expr->type)
+	    {
+	        case IDENTIFIER_DATA:
+	            id_adr=get_entry_addr(func, expr->entry);
+	            PRTARG2(movq, %s, %%rax, id_adr);
+	            break;
+	        case NUMBER_DATA:
+	            //id_adr=get_entry_addr(func, expr->entry);
+	            PRTARG2(movq, $%i, %%rax, *((int*)expr->data));
+	            break;
+	        case EXPRESSION:
+	            
+	            if(expr->n_children==2)
+	            {
+	                //left hand side of expression
+	                generate_expression(func, expr->children[0]);
+	                //put on stack while getting right side
+	                PRT1(pushq, %rax);
+	                //right hand side of expression in rax
+	                generate_expression(func, expr->children[1]);
+	                //pop left hand side to r8
+	                PRT1(popq, %r8);
+	                
+	            }
+	            //finds unary and return before switch case
+	            else
+	            {
+	                puts("\t#unary minus");
+	                id_adr=get_entry_addr(func, expr->children[0]->entry);
+	                PRTARG2(movq, %s, %%rax, id_adr);
+	                PRT1(negq, %rax);
+	                return;
+	            }
+
+	            switch(*(char*)expr->data)
+	            {
+	                case '+':
+	                    puts("\t#addition");
+	                    PRT2(addq, %r8, %rax);
+	                    break;
+	                case '-':
+	                    puts("\t#subtraction");
+	                    PRT2(xchg, %rax, %r8);
+	                    PRT2(subq, %r8, %rax);
+	                    break;
+	                case '*':
+	                    puts("\t#multiplication");
+	                    PRT0(cqo);
+	                    PRT1(imulq, %r8);
+	                    break;
+	                case '/':
+	                    puts("\t#division");
+	                    PRT2(xchg, %rax, %r8);
+	                    PRT0(cqo);
+	                    PRT1(idivq, %r8);
+	                    break;
+	                default:
+	                    return;
+
+	            }
+	    }
+
+	}    
 }
 static void
 generate_assignment(symbol_t* func, node_t* root)
@@ -200,10 +224,11 @@ generate_assignment(symbol_t* func, node_t* root)
     
     
     //generate expression on right hand side of assignment put result in rax
-    puts("\t#assignment");
+   
     generate_expression(func, root->children[1]);
     //find address of left hand side of assignment
     char* id_adr=get_entry_addr(func, root->children[0]->entry);
+    puts("\t#assignment");
     PRTARG2(movq, %%rax, %s, id_adr);
 }
 
@@ -216,7 +241,7 @@ generate_print(symbol_t* func, node_t* root)
         
 
         puts("\t#print");
-        PRTARG2(movq, %%rax, %s, record[0]);
+        //PRTARG2(movq, %%rax, %s, record[0]);
         switch(root->children[i]->type)
         {
             case STRING_DATA:
@@ -227,13 +252,15 @@ generate_print(symbol_t* func, node_t* root)
                 PRT2(movq, $intout, %rdi);
                 id_adr=get_entry_addr(func, root->children[i]->entry);
                 PRTARG2(movq, %s, %%rsi, id_adr);
+                break;
             case EXPRESSION:
                 generate_expression(func, root->children[i]);
                 PRT2(movq, $intout, %rdi);
-                PRT2(movq, %rax, %rdi);
+                PRT2(movq, %rax, %rsi);
+                break;
             case NUMBER_DATA:
                 PRT2(movq, $intout, %rdi);
-                PRTARG2(movq, $%ld, %%rsi\n, *((int64_t*)root->children[i]->data));
+                PRTARG2(movq, $%ld, %%rsi, *((int64_t*)root->children[i]->data));
                 break;
             default:
                 assert(0);
@@ -251,6 +278,7 @@ generate_return(symbol_t* func, node_t* root)
     generate_expression(func, root->children[0]);
     PRT0(leave);
     PRT0(ret);
+    puts("");
 }
 
 
@@ -265,27 +293,83 @@ generate_function_locals(symbol_t* func)
     for(size_t i=0;i<func->nparms;i++)
     {
         PRTARG2(movq,%s, -%lu(%%rbp),record[i],(i+1)*8);
+        if(i>5)
+        {
+        	PRT1(popq, %rax);
+        	PRTARG2(movq, %%rax, -%lu(%%rpb), (i+1)*8);
+        }
     }     
     
-    //here do somehting for local variables
-    for (size_t i=0;i<local_size;i++)
+    //here allocate for local variables
+    /*for (size_t i=func->nparms;i<local_size;i++)
     {
-        //if(func->locals[i]->type=SYM_LOCAL_VAR)
-        //    printf("\tmovq");
-    }
+    	PRTARG2(movq, %%rax, -%lu(%%rpb), (func->nparms+)*8);
+    }*/
 
     //TODO: IF NECESSARY
 }
 
 static void
-generate_if_assignment(symbol_t* func, node_t* root)
+generate_if_statement(symbol_t* func, node_t* root)
 {
+	node_t* relation=root->children[0];
+	node_t* else_;
+	//generate right left side expression
+	generate_expression(func, relation->children[0]);
+	PRT1(pushq, %rax);
+	//generate right hand side of expression
+	generate_expression(func, relation->children[1]);
+ 	PRT1(popq, %r8);
+ 	PRT0(#IF_CHECK);
+ 	PRT2(cmpq, %r8, %rax);
 
+ 	if(root->n_children==3)
+ 	{
+	 	switch(*(char*)root->children[0]->data)
+	 	{
+	 		
+	 		case '=':
+	 			PRTARG1(jne, _ELSE%zu, if_count);
+	 			PRTARG1(je, _IF%zu, if_count);
+	 			break;
+	 		case '<':
+	 			PRTARG1(jle, _ELSE%zu, if_count);
+	 			PRTARG1(jg, _IF%zu, if_count);
+	 			break;
 
+	 		case '>':
+	 			PRTARG1(jge, _ELSE%zu, if_count);
+	 			PRTARG1(jl, _IF%zu, if_count);
+	 			break;
+	 	} 
+	 	puts("");
+ 	}
 
+ 	
+ 	LABELARG(_IF%zu, if_count);
+ 	traverse_(func, root->children[1]);
+	PRTARG1(jmp, _ENDIF%zu, if_count); 	
+ 	
 
+ 	LABELARG(_ELSE%zu, if_count);
+ 	if(root->n_children==3)
+ 	{
+ 		traverse_(func, root->children[2]);
+ 	}
+ 	PRTARG1(jmp, _ENDIF%zu, if_count);
+ 	puts("");
+
+ 	LABELARG(_ENDIF%zu, if_count);
+ 	if_count++;
 }
 
+static void
+generate_while_statement(symbol_t* func, node_t* root)
+{
+
+	//while countar than use label
+
+}
 
 
 
@@ -304,6 +388,12 @@ traverse_(symbol_t* func, node_t* root)
         case RETURN_STATEMENT:
             generate_return(func, root);
             return;
+        case IF_STATEMENT:
+        	generate_if_statement(func, root);
+        	return;
+        case WHILE_STATEMENT:
+        	generate_while_statement(func, root);
+        	return;
 
     }
 
@@ -331,7 +421,7 @@ generate_functions(symbol_t* func){
 }
 
 
-void
+ void
 generate_program ( void )
 {
     size_t n_globals = tlhash_size(global_names);
@@ -340,7 +430,7 @@ generate_program ( void )
 
     generate_stringtable();
     generate_global_names(global_list, n_globals);
-    generate_main(global_list[0]);
+    
 
 
 
@@ -348,11 +438,17 @@ generate_program ( void )
 
     for (size_t i=0;i<n_globals;i++)
     {
-        if(global_list[i]->type==SYM_FUNCTION)
-            generate_functions(global_list[i]);
+        if(global_list[i]->type==SYM_FUNCTION && global_list[i]->seq==0)
+        {
+            generate_main(global_list[i]);
+        }
     }
 
-    /* Put some dummy stuff to keep the skeleton from crashing */
-    PRT2 ( movq, $0, %rax );
-    PRT0 ( call exit );
+    for (size_t i=0;i<n_globals;i++)
+    {
+        if(global_list[i]->type==SYM_FUNCTION)
+        {
+            generate_functions(global_list[i]);
+        }
+    }
 }

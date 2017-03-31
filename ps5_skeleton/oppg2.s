@@ -48,6 +48,10 @@ ABORT:
 END:
 	movq %rax, %rdi
 	call exit
+
+
+
+	#FUNCTION f
 .globl _f
 _f:
 	pushq	%rsp
@@ -55,56 +59,38 @@ _f:
 	subq  	$16, %rsp
 	movq  	%rdi, -8(%rbp)
 	movq  	%rsi, -16(%rbp)
-	#assignment
 	movq  	-8(%rbp), %rax
-	movq  	%rax, _x
 	#assignment
+	movq  	%rax, _x
 	movq  	-16(%rbp), %rax
+	#assignment
 	movq  	%rax, _y
 	#print
-	movq  	%rax, %rdi
 	movq	$strout, %rdi
 	movq  	$STR0, %rsi
 	movq	$0, %rax
 	call printf
 	#print
-	movq  	%rax, %rdi
 	movq	$intout, %rdi
 	movq  	-8(%rbp), %rsi
-	movq  	-8(%rbp), %rax
-	movq	$intout, %rdi
-	movq	%rax, %rdi
-	movq	$intout, %rdi
-	movq  	$97, %rsi
-
 	movq	$0, %rax
 	call printf
 	#print
-	movq  	%rax, %rdi
 	movq	$strout, %rdi
 	movq  	$STR1, %rsi
 	movq	$0, %rax
 	call printf
 	#print
-	movq  	%rax, %rdi
 	movq	$intout, %rdi
 	movq  	-16(%rbp), %rsi
-	movq  	-16(%rbp), %rax
-	movq	$intout, %rdi
-	movq	%rax, %rdi
-	movq	$intout, %rdi
-	movq  	$98, %rsi
-
 	movq	$0, %rax
 	call printf
 	#print
-	movq  	%rax, %rdi
 	movq	$strout, %rdi
 	movq  	$STR2, %rsi
 	movq	$0, %rax
 	call printf
 	#print
-	movq  	%rax, %rdi
 	movq  	_x, %rax
 	pushq	%rax
 	movq  	_y, %rax
@@ -125,20 +111,17 @@ _f:
 	imulq	%r8
 	pushq	%rax
 	#unary minus
-	negq  	_y
+	movq  	_y, %rax
+	negq	%rax
 	popq	%r8
 	#division
 	xchg	%rax, %r8
 	cqo
 	idivq	%r8
 	movq	$intout, %rdi
-	movq	%rax, %rdi
-	movq	$intout, %rdi
-	movq  	$47, %rsi
-
+	movq	%rax, %rsi
 	movq	$0, %rax
 	call printf
-	#assignment
 	movq  	_x, %rax
 	pushq	%rax
 	movq  	_y, %rax
@@ -159,21 +142,21 @@ _f:
 	imulq	%r8
 	pushq	%rax
 	#unary minus
-	negq  	_y
+	movq  	_y, %rax
+	negq	%rax
 	popq	%r8
 	#division
 	xchg	%rax, %r8
 	cqo
 	idivq	%r8
+	#assignment
 	movq  	%rax, _z
 	#print
-	movq  	%rax, %rdi
 	movq	$strout, %rdi
 	movq  	$STR3, %rsi
 	movq	$0, %rax
 	call printf
 	#print
-	movq  	%rax, %rdi
 	movq	$strout, %rdi
 	movq  	$STR4, %rsi
 	movq	$0, %rax
